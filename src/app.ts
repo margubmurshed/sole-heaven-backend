@@ -5,6 +5,8 @@ import passport from "passport";
 import expressSession from "express-session";
 import "./app/config/passport";
 import { envVariables } from "./app/config/env";
+import { globalErrorHandler } from "./middlewares/globalErrorHandler";
+import notFound from "./middlewares/notFound";
 
 const app = express();
 
@@ -29,5 +31,9 @@ app.get("/", (_, res: Response) => {
         message: "Welcome to Sole Heaven Backend"
     })
 })
+
+app.use(globalErrorHandler);
+app.use(notFound)
+
 
 export default app;
