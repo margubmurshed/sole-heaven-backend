@@ -2,6 +2,7 @@ import { Schema, model, Document, Types } from "mongoose";
 
 export interface IProduct extends Document {
     name: string;
+    slug: string;
     shortDescription: string;
     brand: string;
     description: string;
@@ -13,9 +14,40 @@ export interface IProduct extends Document {
     images: string[];
     sizeChartImage?: string;
     category: Types.ObjectId;
+    deletedImages: string[];
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface ICategory extends Document {
+  name: string;
+  description?: string;
+  parent?: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const categorySchema = new Schema<ICategory>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      maxlength: 500,
+    },
+    parent: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      default: null,
+    },
+  },
+  { timestamps: true }
+);
+
+export const Category = model<ICategory>("Category", categorySchema);
 
 const productSchema = new Schema<IProduct>(
     {
@@ -24,10 +56,16 @@ const productSchema = new Schema<IProduct>(
             required: true,
             trim: true,
         },
+        slug: {
+            type: String,
+            required: true,
+            trim: true,
+            unique: true,
+        },
         shortDescription: {
             type: String,
             required: true,
-            maxlength: 160, // SEO/meta-friendly short text
+            maxlength: 160,
         },
         brand: {
             type: String,
@@ -77,5 +115,41 @@ const productSchema = new Schema<IProduct>(
     },
     { timestamps: true }
 );
+
+
+
+productSchema.pre("validate", async function (next) {
+    if (this.isModified("name")) {
+        const baseSlug = this.name.toLowerCase().split(' ').join('-');
+        let slug = `${baseSlug}`;
+        let counter = 0;
+
+        while (await Product.exists({ slug })) {
+            counter++;
+            slug = `${slug}-${counter}`;
+        }
+        this.slug = slug;
+    }
+    next();
+})
+
+productSchema.pre("findOneAndUpdate", async function (next) {
+    const update = this.getUpdate() as Partial<IProduct>;
+    if (update.name) {
+        const baseSlug = update.name.toLowerCase().split(' ').join('-');
+        let slug = `${baseSlug}`;
+        let counter = 0;
+
+        while (await Product.exists({ slug })) {
+            counter++;
+            slug = `${baseSlug}-${counter}`;
+        }
+        update.slug = slug;
+    }
+    this.setUpdate(update);
+
+    next();
+})
+
 
 export const Product = model<IProduct>("Product", productSchema);
