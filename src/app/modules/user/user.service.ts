@@ -48,28 +48,28 @@ const updateUser = async (userId: string, payload: Partial<IUser>, tokenPayload:
     */
 
     // User and guide can only update himself
-    if(tokenPayload.role === Role.USER || tokenPayload.role === Role.GUIDE){
-        if(!(userId === tokenPayload.userId)){
+    if (tokenPayload.role === Role.USER) {
+        if (!(userId === tokenPayload.userId)) {
             throw new AppError("You are not allowed to update other than yourself!", httpStatus.FORBIDDEN);
         }
     }
 
 
     const userToBeUpdated = await User.findById(userId);
-    if(!userToBeUpdated){
+    if (!userToBeUpdated) {
         throw new AppError("User not found", httpStatus.NOT_FOUND);
     }
-    
+
     // user and guide can only update allowed properties
     const allowedProperties = ["name", "password", "phone", "picture", "address"];
     if (hasDisallowedProperties(payload, allowedProperties)) {
-        if (tokenPayload.role === Role.USER || tokenPayload.role === Role.GUIDE) {
+        if (tokenPayload.role === Role.USER) {
             throw new AppError("You are not allowed to update specific properties!", httpStatus.FORBIDDEN);
         }
     }
 
     // Admin can't update super admin
-    if(userToBeUpdated.role === Role.SUPER_ADMIN && tokenPayload.role === Role.ADMIN){
+    if (userToBeUpdated.role === Role.SUPER_ADMIN && tokenPayload.role === Role.ADMIN) {
         throw new AppError("You are not allowed to update Super Admin!", httpStatus.FORBIDDEN);
     }
 
@@ -80,7 +80,7 @@ const updateUser = async (userId: string, payload: Partial<IUser>, tokenPayload:
 
     const updatedUser = await User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true })
 
-    if(payload.picture && userToBeUpdated.picture){
+    if (payload.picture && userToBeUpdated.picture) {
         await deleteImageFromCloudinary(userToBeUpdated.picture);
     }
     return updatedUser;
@@ -95,10 +95,10 @@ const getAllUsers = async (query: Record<string, string>) => {
         queryBuilder.getMetaData()
     ]);
 
-    return {data, meta};
+    return { data, meta };
 }
 
-const getMe = async(userId: string) => {
+const getMe = async (userId: string) => {
     const user = await User.findById(userId).select("-password -updatedAt");
     return {
         data: user

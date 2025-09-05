@@ -7,6 +7,7 @@ import "./app/config/passport";
 import { envVariables } from "./app/config/env";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 import notFound from "./middlewares/notFound";
+import { router } from "./routes";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(cors({
     credentials: true
 }));
 
+app.use("/api/v1", router);
 
 app.get("/", (_, res: Response) => {
     res.status(200).json({
