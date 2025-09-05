@@ -134,38 +134,36 @@ const updateProduct = async (productID: string, payload: Partial<IProduct>) => {
     if(!payload.featuredImage) payload.featuredImage = existingFeaturedImage;
     if(!payload.sizeChartImage) payload.sizeChartImage = existingSizeChartImage;
 
-    console.log(payload);
-    return null
 
-    // const updatedProduct = await Product.findByIdAndUpdate(productID, payload, {
-    //     new: true,
-    //     runValidators: true
-    // });
+    const updatedProduct = await Product.findByIdAndUpdate(productID, payload, {
+        new: true,
+        runValidators: true
+    });
 
-    // const deletedImagesExist = Array.isArray(payload.deletedImages) && payload.deletedImages.length;
+    const deletedImagesExist = Array.isArray(payload.deletedImages) && payload.deletedImages.length;
 
-    // if (deletedImagesExist && existingImages.length) {
-    //     const deletableImages = payload.deletedImages!.filter((url) => existingImages.includes(url));
-    //     if(deletableImages.length){
-    //         await Promise.all(deletableImages.map(imageURL => deleteImageFromCloudinary(imageURL)));
-    //     }
-    // }
+    if (deletedImagesExist && existingImages.length) {
+        const deletableImages = payload.deletedImages!.filter((url) => existingImages.includes(url));
+        if(deletableImages.length){
+            await Promise.all(deletableImages.map(imageURL => deleteImageFromCloudinary(imageURL)));
+        }
+    }
 
-    // if (deletedImagesExist && existingFeaturedImage) {
-    //     const deletableFeaturedImage = payload.deletedImages!.find((url) => url === existingFeaturedImage);
-    //     if(deletableFeaturedImage){
-    //         await deleteImageFromCloudinary(deletableFeaturedImage);
-    //     }
-    // }
+    if (deletedImagesExist && existingFeaturedImage) {
+        const deletableFeaturedImage = payload.deletedImages!.find((url) => url === existingFeaturedImage);
+        if(deletableFeaturedImage){
+            await deleteImageFromCloudinary(deletableFeaturedImage);
+        }
+    }
 
-    // if (deletedImagesExist && existingSizeChartImage) {
-    //     const deletableFeaturedImage = payload.deletedImages!.find((url) => url === existingSizeChartImage);
-    //     if(deletableFeaturedImage){
-    //         await deleteImageFromCloudinary(deletableFeaturedImage);
-    //     }
-    // }
+    if (deletedImagesExist && existingSizeChartImage) {
+        const deletableFeaturedImage = payload.deletedImages!.find((url) => url === existingSizeChartImage);
+        if(deletableFeaturedImage){
+            await deleteImageFromCloudinary(deletableFeaturedImage);
+        }
+    }
 
-    // return updatedProduct;
+    return updatedProduct;
 }
 
 const deleteProduct = async (productID: string) => {

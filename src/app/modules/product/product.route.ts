@@ -4,15 +4,16 @@ import { Role } from "../user/user.interface";
 import { createCategorySchema, createProductSchema, updateCategorySchema, updateProductSchema } from "./product.validation";
 import checkAuth from "../../../middlewares/checkAuth";
 import { multerUpload } from "../../config/multer.config";
+import { ProductController } from "./product.controller";
 
 const router = Router();
 
 // ----------------- Product Categories Routes -----------------
-router.post("/category/create", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(createCategorySchema),);
-router.get("/category",);
-router.get("/category/:id",);
-router.patch("/category/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(updateCategorySchema),);
-router.delete("/category/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN),);
+router.post("/category/create", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(createCategorySchema), ProductController.createCategory);
+router.get("/category", ProductController.getCategories);
+router.get("/category/:id", ProductController.getSingleCategory);
+router.patch("/category/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(updateCategorySchema), ProductController.updateCategory);
+router.delete("/category/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), ProductController.deleteCategory);
 
 router.post(
     "/create",
@@ -22,7 +23,7 @@ router.post(
         { name: "featuredImage", maxCount: 1 },
         { name: "sizeChartImage", maxCount: 1 }
     ]),
-    validateRequest(createProductSchema),
+    validateRequest(createProductSchema), ProductController.createProduct
 );
 
 router.patch(
@@ -33,11 +34,11 @@ router.patch(
         { name: "featuredImage", maxCount: 1 },
         { name: "sizeChartImage", maxCount: 1 }
     ]),
-    validateRequest(updateProductSchema),
+    validateRequest(updateProductSchema), ProductController.updateProduct
 );
 
-router.get("/",);
-router.get("/:id",);
-router.delete("/:id",checkAuth(Role.ADMIN, Role.SUPER_ADMIN),);
+router.get("/", ProductController.getProducts);
+router.get("/:id", ProductController.updateProduct);
+router.delete("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), ProductController.deleteProduct);
 
 export const ProductRoutes = router;

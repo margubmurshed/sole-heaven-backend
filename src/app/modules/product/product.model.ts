@@ -65,7 +65,6 @@ const productSchema = new Schema<IProduct>(
         shortDescription: {
             type: String,
             required: true,
-            maxlength: 160,
         },
         brand: {
             type: String,
@@ -75,7 +74,6 @@ const productSchema = new Schema<IProduct>(
         description: {
             type: String,
             required: true,
-            maxlength: 2000,
         },
         price: {
             type: Number,

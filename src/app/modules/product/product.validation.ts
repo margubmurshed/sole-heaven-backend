@@ -17,12 +17,10 @@ export const updateCategorySchema = createCategorySchema.partial();
 export const createProductSchema = z.object({
   name: z.string().nonempty("Product name is required").trim(),
   shortDescription: z
-    .string()
-    .max(160, "Short description must be at most 160 characters"),
+    .string(),
   brand: z.string().nonempty("Brand is required").trim(),
   description: z
-    .string()
-    .max(2000, "Description must be at most 2000 characters"),
+    .string(),
   price: z.number().nonnegative("Price must be a positive number"),
   sku: z.string().nonempty("SKU is required").transform((val) => val.toUpperCase()),
   sizes: z.array(z.number().positive("Size must be positive")).nonempty("Sizes required"),
@@ -33,4 +31,6 @@ export const createProductSchema = z.object({
   category: objectId,
 });
 
-export const updateProductSchema = createProductSchema.partial();
+export const updateProductSchema = createProductSchema.partial().extend({
+  deletedImages: z.array(z.string()).optional()
+});
