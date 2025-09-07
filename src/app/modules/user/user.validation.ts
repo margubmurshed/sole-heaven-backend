@@ -1,6 +1,12 @@
 import z from "zod";
 import { IsActive, Role } from "./user.interface";
 
+export const BDPhoneNumberSchema = z
+        .string({ invalid_type_error: "Phone Number must be string" })
+        .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
+            message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
+        })
+
 export const createUserZodSchema = z.object({
     name: z
         .string({ invalid_type_error: "Name must be string" })
@@ -23,12 +29,7 @@ export const createUserZodSchema = z.object({
         .regex(/^(?=.*\d)/, {
             message: "Password must contain at least 1 number.",
         }),
-    phone: z
-        .string({ invalid_type_error: "Phone Number must be string" })
-        .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
-            message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
-        })
-        .optional(),
+    phone: BDPhoneNumberSchema.optional(),
     address: z
         .string({ invalid_type_error: "Address must be string" })
         .max(200, { message: "Address cannot exceed 200 characters." })
@@ -53,11 +54,7 @@ export const updateUserZodSchema = z.object({
         .regex(/^(?=.*\d)/, {
             message: "Password must contain at least 1 number.",
         }).optional(),
-    phone: z
-        .string({ invalid_type_error: "Phone Number must be string" })
-        .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
-            message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
-        })
+    phone: BDPhoneNumberSchema
         .optional(),
     role: z
         .enum(Object.values(Role) as [string])
