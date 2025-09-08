@@ -25,10 +25,10 @@ const sendOTP = async (email: string) => {
 
     await sendEmail({
         to: email,
-        subject: "OTP for PH Tour Management System Login",
+        subject: "OTP - Sole Heaven Bangladesh",
         templateName: "otp",
         templateData: {
-            logoUrl: "https://i.ibb.co.com/99n30ccq/logo.png",
+            logoUrl: "https://res.cloudinary.com/dtj9zokyu/image/upload/v1757256713/SOLE-HEAVEN-DARK-LOGO-EMAIL_dryvxd.png",
             date: new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' }),
             name: user.name,
             otp
