@@ -57,14 +57,15 @@ const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
 const logOut = catchAsync(async (req: Request, res: Response) => {
     res.clearCookie("accessToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
-    })
+        secure: true,
+        sameSite: "none",
+    });
+
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
-    })
+        secure: true,
+        sameSite: "none",
+    });
 
     sendResponse(res, {
         success: true,
@@ -89,7 +90,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
-const setPassword = catchAsync(async(req: Request, res: Response) => {
+const setPassword = catchAsync(async (req: Request, res: Response) => {
     const password = req.body.password;
     const jwtPayload = req.user as JwtPayload;
 
@@ -103,8 +104,8 @@ const setPassword = catchAsync(async(req: Request, res: Response) => {
     })
 })
 
-const forgetPassword = catchAsync(async(req: Request, res: Response) => {
-    const {email} = req.body;
+const forgetPassword = catchAsync(async (req: Request, res: Response) => {
+    const { email } = req.body;
 
     await AuthServices.forgetPassword(email);
 
@@ -116,8 +117,8 @@ const forgetPassword = catchAsync(async(req: Request, res: Response) => {
     })
 })
 
-const resetPassword = catchAsync(async(req: Request, res: Response) => {
-    const {password} = req.body;
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+    const { password } = req.body;
     const resetPasswordToken = req.headers.authorization || req.cookies.accessToken;
 
     if (!resetPasswordToken) {
