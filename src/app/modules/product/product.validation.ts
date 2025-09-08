@@ -9,7 +9,7 @@ const objectId = z
 export const createCategorySchema = z.object({
   name: z.string().nonempty("Category name is required").trim(),
   description: z.string().max(500, "Description must be at most 500 characters").optional(),
-  parent: objectId.optional(), // optional if it's a subcategory
+  parent: objectId.nullable().optional(), // optional if it's a subcategory
 });
 
 export const updateCategorySchema = createCategorySchema.partial();

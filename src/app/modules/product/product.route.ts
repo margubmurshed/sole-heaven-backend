@@ -38,7 +38,7 @@ router.patch(
 );
 
 router.get("/", ProductController.getProducts);
-router.get("/:id", ProductController.updateProduct);
+router.get("/:slug", ProductController.getSingleProduct);
 router.delete("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), ProductController.deleteProduct);
 
 export const ProductRoutes = router;
