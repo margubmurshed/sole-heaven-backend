@@ -20,31 +20,37 @@ export interface IProduct extends Document {
 }
 
 export interface ICategory extends Document {
-  name: string;
-  description?: string;
-  parent?: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
+    name: string;
+    description?: string;
+    featuredImage?: string;
+    deletedImages: string[];
+    parent?: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const categorySchema = new Schema<ICategory>(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
+    {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        description: {
+            type: String,
+            maxlength: 500,
+        },
+        parent: {
+            type: Schema.Types.ObjectId,
+            ref: "Category",
+            default: null,
+        },
+        featuredImage: {
+            type: String,
+            required: true,
+        },
     },
-    description: {
-      type: String,
-      maxlength: 500,
-    },
-    parent: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-      default: null,
-    },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 export const Category = model<ICategory>("Category", categorySchema);

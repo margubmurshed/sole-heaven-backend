@@ -58,7 +58,7 @@ const successPayment = async (query: Record<string, string>) => {
             { path: "products.product", select: "name price" }
         ])
 
-        console.log(updatedOrder, "success payment")
+        // console.log(updatedOrder, "success payment")
 
         if (!updatedOrder) throw new AppError("Order not found", httpStatus.NOT_FOUND)
         if (!updatedPayment) throw new AppError("Payment not found", httpStatus.NOT_FOUND)
@@ -67,7 +67,7 @@ const successPayment = async (query: Record<string, string>) => {
             orderDate: updatedOrder.createdAt,
             totalAmount: updatedPayment.amount,
             customerName: (updatedOrder.user as Partial<IUser>).name as string,
-            orderId: updatedPayment?.order,
+            orderId: updatedOrder?._id.toString(),
             billingAddress: updatedOrder.billingAddress,
             paymentMethod: updatedOrder.paymentMethod,
             shippingCost: updatedOrder.shippingCost,
@@ -80,6 +80,8 @@ const successPayment = async (query: Record<string, string>) => {
                 size: p.size,
             }))
         }
+
+        console.log(invoiceData)
 
         const pdfBuffer = await generateInvoicePDF(invoiceData);
 

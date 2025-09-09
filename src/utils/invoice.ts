@@ -15,7 +15,7 @@ export interface IInvoiceProduct {
   }
 
 export interface IInvoiceData {
-  orderId: Types.ObjectId;
+  orderId: string;
   orderDate: Date;
   customerName: string;
   billingAddress: {

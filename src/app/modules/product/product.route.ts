@@ -9,10 +9,24 @@ import { ProductController } from "./product.controller";
 const router = Router();
 
 // ----------------- Product Categories Routes -----------------
-router.post("/category/create", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(createCategorySchema), ProductController.createCategory);
+router.post("/category/create", 
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+    multerUpload.fields([
+        { name: "featuredImage", maxCount: 1 }
+    ]),
+    validateRequest(createCategorySchema), 
+    ProductController.createCategory
+);
 router.get("/category", ProductController.getCategories);
 router.get("/category/:id", ProductController.getSingleCategory);
-router.patch("/category/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), validateRequest(updateCategorySchema), ProductController.updateCategory);
+router.patch("/category/:id", 
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN), 
+    multerUpload.fields([
+        { name: "featuredImage", maxCount: 1 }
+    ]),
+    validateRequest(updateCategorySchema), 
+    ProductController.updateCategory
+);
 router.delete("/category/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), ProductController.deleteCategory);
 
 router.post(

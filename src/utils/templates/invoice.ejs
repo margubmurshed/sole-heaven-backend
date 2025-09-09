@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Invoice - <%= invoiceData.orderId %></title>
+  <title>Invoice - <%= orderId %></title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -50,17 +50,17 @@
     <h2>Invoice</h2>
 
     <div class="info">
-      <p><strong>Order ID:</strong> <%= invoiceData.orderId %></p>
-      <p><strong>Order Date:</strong> <%= new Date(invoiceData.orderDate).toLocaleDateString() %></p>
-      <p><strong>Customer:</strong> <%= invoiceData.customerName %></p>
+      <p><strong>Order ID:</strong> <%= orderId %></p>
+      <p><strong>Order Date:</strong> <%= new Date(orderDate).toLocaleDateString() %></p>
+      <p><strong>Customer:</strong> <%= customerName %></p>
     </div>
 
     <div class="info">
       <h3>Billing Address</h3>
-      <p><%= invoiceData.billingAddress.name %></p>
-      <p><%= invoiceData.billingAddress.address %></p>
-      <p><%= invoiceData.billingAddress.city %>, <%= invoiceData.billingAddress.district %> - <%= invoiceData.billingAddress.postalCode || '' %></p>
-      <p>Phone: <%= invoiceData.billingAddress.phone %></p>
+      <p><%= billingAddress.name %></p>
+      <p><%= billingAddress.address %></p>
+      <p><%= billingAddress.city %>, <%= billingAddress.district %> - <%= billingAddress.postalCode || '' %></p>
+      <p>Phone: <%= billingAddress.phone %></p>
     </div>
 
     <table>
@@ -74,7 +74,7 @@
         </tr>
       </thead>
       <tbody>
-        <% invoiceData.products.forEach(item => { %>
+        <% products.forEach(item => { %>
           <tr>
             <td><%= item.product.name %></td>
             <td><%= item.size %></td>
@@ -87,9 +87,9 @@
     </table>
 
     <div class="total">
-      <p>Shipping Cost: <%= invoiceData.shippingCost %></p>
-      <p>Total: <%= invoiceData.totalAmount %></p>
-      <p>Payment Method: <%= invoiceData.paymentMethod %></p>
+      <p>Shipping Cost: <%= shippingCost %></p>
+      <p>Total: <%= totalAmount %></p>
+      <p>Payment Method: <%= paymentMethod %></p>
     </div>
   </div>
 </body>

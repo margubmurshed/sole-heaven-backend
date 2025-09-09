@@ -33,7 +33,7 @@ const billingAddressSchema = z.object({
 const orderProductSchema = z.object({
   product: objectId,
   quantity: z.number().int().positive("Quantity must be positive"),
-  size: z.number().int().positive("Quantity must be positive")
+  size: z.number().positive("Size must be positive")
 });
 
 // Create Order Schema

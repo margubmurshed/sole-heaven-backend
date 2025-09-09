@@ -52,10 +52,22 @@ const updateCategory = async (categoryID: string, payload: Partial<ICategory>) =
         throw new AppError("A tour type with this name already exists", httpStatus.BAD_REQUEST);
     }
 
+    let existingFeaturedImage = doesCategoryExist.featuredImage;
+    if(!payload.featuredImage) payload.featuredImage = existingFeaturedImage;
+
     const updatedCategory = await Category.findByIdAndUpdate(categoryID, payload, {
         new: true,
         runValidators: true
     });
+
+    const deletedImagesExist = Array.isArray(payload.deletedImages) && payload.deletedImages.length;
+    if (deletedImagesExist && existingFeaturedImage) {
+        const deletableFeaturedImage = payload.deletedImages!.find((url) => url === existingFeaturedImage);
+        if(deletableFeaturedImage){
+            await deleteImageFromCloudinary(deletableFeaturedImage);
+        }
+    }
+
 
     return updatedCategory
 }

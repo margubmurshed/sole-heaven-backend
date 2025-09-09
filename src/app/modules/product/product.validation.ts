@@ -12,7 +12,9 @@ export const createCategorySchema = z.object({
   parent: objectId.nullable().optional(), // optional if it's a subcategory
 });
 
-export const updateCategorySchema = createCategorySchema.partial();
+export const updateCategorySchema = createCategorySchema.partial().extend({
+  deletedImages: z.array(z.string()).optional()
+});
 
 export const createProductSchema = z.object({
   name: z.string().nonempty("Product name is required").trim(),
@@ -24,10 +26,7 @@ export const createProductSchema = z.object({
   price: z.number().nonnegative("Price must be a positive number"),
   sku: z.string().nonempty("SKU is required").transform((val) => val.toUpperCase()),
   sizes: z.array(z.number().positive("Size must be positive")).nonempty("Sizes required"),
-  stock: z.number().nonnegative().optional(),
-  featuredImage: z.string().nonempty("Featured image is required").optional(),
-  images: z.array(z.string().nonempty("Image URL required")).nonempty("At least one image required").optional(),
-  sizeChartImage: z.string().optional(),
+  stock: z.number().nonnegative(),
   category: objectId,
 });
 

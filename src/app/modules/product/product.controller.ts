@@ -10,6 +10,18 @@ import { ProductService } from "./product.service";
 
 /* Category Controllers ------------------------------------------------*/
 const createCategory = catchAsync(async (req: Request, res: Response) => {
+    const files = req.files as Record<string, Express.Multer.File[]>
+    const featuredImage = files.featuredImage?.[0]
+
+    const payload: IProduct = {
+        ...req.body,
+        featuredImage: featuredImage ? featuredImage.path : "",
+    }
+
+    if (!payload.featuredImage) {
+        throw new AppError("Featured image is required for the product.", httpStatus.BAD_REQUEST);
+    }
+
     const category = await ProductService.createCategory(req.body);
 
     sendResponse(res, {
@@ -47,7 +59,15 @@ const getSingleCategory = catchAsync(async (req: Request, res: Response) => {
 
 const updateCategory = catchAsync(async (req: Request, res: Response) => {
     const categoryID = req.params.id;
-    const updatedCategory = await ProductService.updateCategory(categoryID, req.body);
+    const files = req.files as Record<string, Express.Multer.File[]>
+    const featuredImage = files.featuredImage?.[0]
+
+    const payload: Partial<IProduct> = {
+        ...req.body,
+        featuredImage: featuredImage ? featuredImage.path : "",
+    }
+
+    const updatedCategory = await ProductService.updateCategory(categoryID, payload);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
