@@ -102,13 +102,29 @@ const getOrders = async (query: Record<string, string>) => {
 }
 
 const getUserOrders = async (userId: string, query: Record<string, string>) => {
-    const queryBuilder = new QueryBuilder(Order.find({ user: userId }).populate("user", "name email"), query);
+    const filter = {
+        user: userId
+    }
+    const queryBuilder = new QueryBuilder(Order.find(filter).populate("user", "name email"), query);
     const orders = queryBuilder.filter().fields().sort().paginate();
-    const [data, meta] = await Promise.all([
-        orders.build(),
-        orders.getMetaData(),
+    const [data] = await Promise.all([
+        orders.build()
     ])
-    return { data, meta };
+
+    const totalDocuments = await Order.countDocuments({ ...filter });
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 10;
+    const totalPages = Math.ceil(totalDocuments / limit);
+
+
+    return {
+        data, meta: {
+            total: totalDocuments,
+            page,
+            limit,
+            totalPages
+        }
+    }
 }
 
 const getSingleOrder = async (orderID: string) => {
