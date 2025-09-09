@@ -80,6 +80,7 @@ const createOrder = async (payload: z.infer<typeof createOrderSchema>, userId: s
                 paymentURL: sslPayment.GatewayPageURL
             };
         } else {
+            await session.commitTransaction();
             return { order };
         }
     }
@@ -91,7 +92,7 @@ const createOrder = async (payload: z.infer<typeof createOrderSchema>, userId: s
     }
 }
 const getOrders = async (query: Record<string, string>) => {
-    const queryBuilder = new QueryBuilder(Order.find(), query);
+    const queryBuilder = new QueryBuilder(Order.find().populate("user", "name email"), query);
     const orders = queryBuilder.filter().fields().sort().paginate();
     const [data, meta] = await Promise.all([
         orders.build(),
@@ -100,9 +101,14 @@ const getOrders = async (query: Record<string, string>) => {
     return { data, meta };
 }
 
-const getUserOrders = async (userId: string) => {
-    const orders = await Order.find({ user: userId });
-    return orders;
+const getUserOrders = async (userId: string, query: Record<string, string>) => {
+    const queryBuilder = new QueryBuilder(Order.find({ user: userId }).populate("user", "name email"), query);
+    const orders = queryBuilder.filter().fields().sort().paginate();
+    const [data, meta] = await Promise.all([
+        orders.build(),
+        orders.getMetaData(),
+    ])
+    return { data, meta };
 }
 
 const getSingleOrder = async (orderID: string) => {
@@ -111,7 +117,10 @@ const getSingleOrder = async (orderID: string) => {
         throw new AppError("Invalid order id! Please provide valid id", httpStatus.BAD_REQUEST);
     }
 
-    const order = await Order.findById(orderID);
+    const order = await Order.findById(orderID)
+        .populate("user", "name email")
+        .populate("products.product", "name price featuredImage")
+        .populate("payment");
     if (!order) {
         throw new AppError("No order found by this order id!", httpStatus.NOT_FOUND);
     }

@@ -8,6 +8,7 @@ import { OrderService } from "./order.service";
 const createOrder = catchAsync(async (req: Request, res: Response) => {
     const jwtPayload = req.user as JwtPayload;
     const order = await OrderService.createOrder(req.body, jwtPayload.userId);
+    console.log(order)
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
         success: true,
@@ -30,12 +31,14 @@ const getOrders = catchAsync(async (req: Request, res: Response) => {
 
 const getUserOrders = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as JwtPayload;
-    const result = await OrderService.getUserOrders(user.userId);
+    const query = req.query as Record<string, string>;
+    const result = await OrderService.getUserOrders(user.userId, query);
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
         message: "User orders retrieved successfully!",
-        data: result
+        data: result.data,
+        meta: result.meta
     })
 })
 const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
